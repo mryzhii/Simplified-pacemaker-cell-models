@@ -70,10 +70,10 @@ for nt = 1:2
         v = v1;
 %  Downsample to create output matrix         
           if rem(t,si1) == 0
-            j = floor(t/si1);
-            ts_UH_BE(1,j) = u;
-            ts_UH_BE(2,j) = v;
-            ts_T_BE(j) = t*dt_backward;
+              j = floor(t/si1);
+              ts_UH_BE(1,j) = u;
+              ts_UH_BE(2,j) = v;
+              ts_T_BE(j) = t*dt_backward;
           end
       end  % t
       sim_time_BE(run) = toc;
@@ -107,10 +107,10 @@ for nt = 1:2
            v =  v + dt_forward*dvdt; 
  %  Downsample to create output matrix         
            if rem(t,si2) == 0
-            j = floor(t/si2);
-            ts_UH_FE(1,j) = u;
-            ts_UH_FE(2,j) = v;
-            ts_T_FE(j) = t*dt_forward;
+               j = floor(t/si2);
+               ts_UH_FE(1,j) = u;
+               ts_UH_FE(2,j) = v;
+               ts_T_FE(j) = t*dt_forward;
            end      
         end % t
         sim_time_FE(run) = toc;
