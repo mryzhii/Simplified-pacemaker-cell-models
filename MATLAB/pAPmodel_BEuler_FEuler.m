@@ -89,7 +89,7 @@ for nt = 1:2
         nloc = length(locs);
         Freq_BE = 1.0/Period_BE;
         Ampl_BE = max(proms(end/2:end));
-        Maxp_BE = max(proms(end/2:end));
+        Maxp_BE = max(peaks(end/2:end));
       end
       fprintf('BE: dt_backward = %0.5f  Period_BE = %0.5f  Freq_BE = %0.4f  Ampl_BE = %0.4f \n',...
                     dt_backward,Period_BE,Freq_BE,Ampl_BE);
