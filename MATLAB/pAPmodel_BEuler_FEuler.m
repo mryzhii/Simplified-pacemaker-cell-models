@@ -50,7 +50,7 @@ for nt = 1:2
       for t = 2 : T 
         iter   =  0;
         residual0    =  1.0e6;
-        while residual0 > 1.0e-7 && iter < 20
+        while residual0 > 1.0e-7 && iter <= 20
             dtt = dt_backward*ct;
             tmp  =  (1.0 + dtt*(eps0 + mu1*k*u1*(u1-a-1.0)/(u1+mu2)) );
             v1   =  (-tmp + sqrt(tmp^2 - 4.0*dtt*mu1/(u1+mu2)*(dtt*eps0*k*u1*(u1-a-1.0)- v)))/(2.0*dtt*mu1/(u1+mu2));
@@ -63,7 +63,7 @@ for nt = 1:2
             %residual0 = max(abs(residual), [], 'all'); % In the case of tissue
             residual0 = abs(residual);
         end % while
-        if iter > 19, fprintf("Warning: it = 20, Residual = %e\n", residual0); end
+        if iter > 20, fprintf("Warning: iter > 20, Residual = %e\n", residual0); end
         u = u1;
         v = v1;
 %  Downsample to create output matrix         
@@ -75,7 +75,7 @@ for nt = 1:2
           end
       end  % t
       sim_time_BE(run) = toc;
-      [peaks,locs,widths,proms]=findpeaks(ts_UH_BE(1,1:end),ts_T_BE(1:end),...
+      [peaks,locs,widths,proms] = findpeaks(ts_UH_BE(1,1:end),ts_T_BE(1:end),...
         'MinPeakHeight',0.1,'MinPeakDistance',0.10);
         Period_BE = 1.e-3*mean(diff(locs));   % In [s]
       if isnan(Period_BE) 
@@ -112,7 +112,7 @@ for nt = 1:2
         end % t
         sim_time_FE(run) = toc;
         
-        [peaks2,locs2,widths2,proms2]=findpeaks(ts_UH_FE(1,1:end),ts_T_FE(1:end),...
+        [peaks2,locs2,widths2,proms2] = findpeaks(ts_UH_FE(1,1:end),ts_T_FE(1:end),...
         'MinPeakHeight',0.1,'MinPeakDistance',0.10);
         Period_FE = 1.e-3*mean(diff(locs2));   % In [s]
         if isnan(Period_FE) 
