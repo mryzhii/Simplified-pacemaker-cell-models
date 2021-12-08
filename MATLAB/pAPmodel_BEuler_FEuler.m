@@ -152,7 +152,7 @@ Udiff_matL_inf_rel = norm(ts_UH_BE(1,nbegin:nend)-ts_UH_FE(1,nbegin+nn1:nend+nn1
 fprintf(' L_2 relative norm   = %0.8f / %0.4f%% \n',  Udiff_matL_2_rel,   Udiff_matL_2_rel*100);
 fprintf(' L_inf relative norm = %0.8f / %0.4f%% \n',  Udiff_matL_inf_rel, Udiff_matL_inf_rel*100);
 
-fprintf(' Frequency_BE-Frequency_FE = %0.5e  d_Frequency_rel = %0.5e / %0.3f%% \n',...
+fprintf(' Frequency_BE-Frequency_FE = %0.5e  d_Frequency_rel = %0.5e / %0.3f%%\n',...
     Freq_BE-Freq_FE,abs(Freq_BE-Freq_FE)/Freq_BE,abs(Freq_BE-Freq_FE)/Freq_BE*100);
 fprintf(' sim_time_BE/sim_time_FE = %0.2f \n',sum(sim_time_BE/sim_time_FE)/nruns );
 
