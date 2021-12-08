@@ -102,8 +102,6 @@ for nt = 1:2
           del_h = (h_inf-h)/tau; 
           u = u + dt_forward*del_u;
           h = h + dt_forward*del_h; 
-          %u = u1;
-          %h = h1;
 %  Downsample to create output matrix          
           if rem(t,si2) == 0
             j = floor(t/si2);

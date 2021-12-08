@@ -78,7 +78,7 @@ for nt = 1:2
       end  % t
       sim_time_BE(run) = toc;
       [peaks,locs,widths,proms]=findpeaks(ts_UH_BE(1,1:end),ts_T_BE(1:end),...
-        'MinPeakHeight',0.1,'MinPeakDistance',0.10); %Min_dist);
+        'MinPeakHeight',0.1,'MinPeakDistance',0.10);
         Period_BE = 1.e-3*mean(diff(locs));   % In [s]
       if isnan(Period_BE) 
         nloc = 0;
@@ -103,10 +103,8 @@ for nt = 1:2
            dtt = dt_forward*ct;
            dudt = -ct*( k*u*(u + bAP)*(u - 1) + u*v) + spat;
            dvdt = ct*(eps0 + mu1*v/(u+mu2))*(-v-k*u*(u-a-1.0));
-           u1 =  u + dt_forward*dudt;  %     dtt*dudt;
-           v1 =  v + dt_forward*dvdt; %     dtt*dvdt;
-           u = u1;
-           v = v1;    
+           u =  u + dt_forward*dudt; 
+           v =  v + dt_forward*dvdt; 
  %  Downsample to create output matrix         
            if rem(t,si2) == 0
             j = floor(t/si2);
@@ -118,7 +116,7 @@ for nt = 1:2
         sim_time_FE(run) = toc;
         
         [peaks2,locs2,widths2,proms2]=findpeaks(ts_UH_FE(1,1:end),ts_T_FE(1:end),...
-        'MinPeakHeight',0.1,'MinPeakDistance',0.10); %Min_dist);
+        'MinPeakHeight',0.1,'MinPeakDistance',0.10);
         Period_FE = 1.e-3*mean(diff(locs2));   % In [s]
         if isnan(Period_FE) 
             nloc2 = 0;
