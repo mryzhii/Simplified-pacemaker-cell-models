@@ -66,7 +66,7 @@ for nt = 1:2
           h = h1;     
 %  Downsample to create output matrix         
           if rem(t,si1) == 0
-            j = floor(t/si1);
+              j = floor(t/si1);
             ts_UH_BE(1,j) = u;
             ts_UH_BE(2,j) = h;
             ts_T_BE(1,j) = t*dt_backward;
@@ -74,7 +74,7 @@ for nt = 1:2
        end % t
        sim_time_BE(run) = toc;
        [peaks,locs,widths,proms]=findpeaks(ts_UH_BE(1,1:end),ts_T_BE(1:end),...
-        'MinPeakHeight',0.1,'MinPeakDistance',0.10);
+           'MinPeakHeight',0.1,'MinPeakDistance',0.10);
        Period_BE = 1.e-3*mean(diff(locs));   % In [s]
        if isnan(Period_BE) 
           nloc = 0;
@@ -88,7 +88,7 @@ for nt = 1:2
           Maxp_BE = max(peaks(end/2:end));
        end
        fprintf('BE: dt_backward = %0.5f  Period_BE = %0.4f  Freq_BE = %0.4f  Ampl_BE = %0.4f\n',...
-                    dt_backward,Period_BE,Freq_BE,Ampl_BE);
+           dt_backward,Period_BE,Freq_BE,Ampl_BE);
 
     case 2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Forward Euler
        tic
