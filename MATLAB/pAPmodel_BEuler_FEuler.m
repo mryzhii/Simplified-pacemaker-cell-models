@@ -52,14 +52,12 @@ for nt = 1:2
         residual0    =  1.0e6;
         while residual0 > 1.0e-7 && iter < 20
             dtt = dt_backward*ct;
-            aux  =  (1.0 + dtt*(eps0 + mu1*k*u1*(u1-a-1.0)/(u1+mu2)  )   );
-            v1   =  (-aux + sqrt(aux^2 - 4.0*dtt*mu1/(u1+mu2)*(dtt*eps0*k*u1*(u1-a-1.0)- v)))  /  (2.0*dtt*mu1/(u1+mu2));
+            tmp  =  (1.0 + dtt*(eps0 + mu1*k*u1*(u1-a-1.0)/(u1+mu2)) );
+            v1   =  (-tmp + sqrt(tmp^2 - 4.0*dtt*mu1/(u1+mu2)*(dtt*eps0*k*u1*(u1-a-1.0)- v)))/(2.0*dtt*mu1/(u1+mu2));
             dvdu  =  mu1*v1/(u1+mu2)*(v1 + k*u1*(u1-a-1.0)) - k*(1.0*u1-a-1.0)*(eps0*(u1+mu2)+mu1*v1)/(mu1*(v1+k*u1*(u1-a-1.0)) + (2.0/dtt+eps0)*(u1+mu2));
-            
             itotal =  k*u1*(u1+bAP)*(u1-1.0) + u1*v1 - spat/ct;
-            
-            ditotal   =  k*(u1*(3.0*u1-2.0) + bAP*(2.0*u1-1.0)) + v1 + u1*dvdu;
-            residual   =  (u1 - u)/dtt + itotal; 
+            ditotal =  k*(u1*(3.0*u1-2.0) + bAP*(2.0*u1-1.0)) + v1 + u1*dvdu;
+            residual =  (u1 - u)/dtt + itotal; 
             u1    =  u1 - residual/(1.0/dtt + ditotal);
             iter  =  iter + 1;
             %residual0 = max(abs(residual), [], 'all'); % In the case of tissue
