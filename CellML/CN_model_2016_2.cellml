@@ -7,7 +7,7 @@
  CellML 1.0 was used to generate this cellular model
  http://www.CellML.org/
 
- Modified (based on sigmoid function) Corrado & Niederer tho-variable cardiac excitable cell model. 
+ Modified (based on sigmoid function) Corrado & Niederer two-variable cardiac excitable cell model. 
  Corrado C, Niederer SA. A two-variable model robust to pacemaker behaviour for the dynamics of the cardiac action potential. 
  Math Biosci. 2016; 281: 46&#45;&#45;54. 
  https://doi.org/10.1016/j.mbs.2016.08.010-->
