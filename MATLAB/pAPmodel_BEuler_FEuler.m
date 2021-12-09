@@ -5,11 +5,11 @@
 %   *  under review                                                      *
 %   *  05/12/2021                                                        *
 %   **********************************************************************
-% Pacemaker (oscillator) variant of the Aliev & PanfilovNiederer model (1996)
+% Pacemaker (oscillator) variant of the Aliev & Panfilov model (1996)
 % Comparison of Backward Euler and Forward Euler methods with different time step dt
 %
 clear all
-total_time = 30000; %60000; % Time in [ms]
+total_time = 60000; % Time in [ms]
 % Constants of the model
 k    = 8.0;
 a    = 0.15; 
@@ -86,8 +86,8 @@ for nt = 1:2
      else
         nloc = length(locs);
         Freq_BE = 1.0/Period_BE;
-        Ampl_BE = max(proms(end/2:end));
-        Maxp_BE = max(peaks(end/2:end));
+        Ampl_BE = max(proms(floor(end/2):end));
+        Maxp_BE = max(peaks(floor(end/2):end));
       end
       fprintf('BE: dt_backward = %0.5f  Period_BE = %0.5f  Freq_BE = %0.4f  Ampl_BE = %0.4f \n',...
                     dt_backward,Period_BE,Freq_BE,Ampl_BE);
@@ -123,8 +123,8 @@ for nt = 1:2
         else
             nloc2 = length(locs2);
             Freq_FE = 1.0/Period_FE;
-            Ampl_FE = max(proms2(end/2:end));
-            Maxp_FE = max(peaks2(end/2:end));
+            Ampl_FE = max(proms2(floor(end/2):end));
+            Maxp_FE = max(peaks2(floor(end/2):end));
         end
  
        fprintf('FE: dt_forward  = %0.5f  Period_FE = %0.5f  Freq_FE = %0.4f  Ampl_FE = %0.4f\n',...
@@ -153,7 +153,7 @@ fprintf(' Frequency_BE-Frequency_FE = %0.5e  d_Frequency_rel = %0.5e / %0.3f%%\n
     Freq_BE-Freq_FE,abs(Freq_BE-Freq_FE)/Freq_BE,abs(Freq_BE-Freq_FE)/Freq_BE*100);
 fprintf(' sim_time_BE/sim_time_FE = %0.2f \n',sum(sim_time_BE/sim_time_FE)/nruns );
 
-%%%%%%%%%%%%%%%%%%%%%%%%%% Plot action potentials
+%%%%%%%%%%%%%%%%%%%%%%%%%% Plot of action potentials
 Fig = figure();
 clf
 subplot(1,2,1)
@@ -161,23 +161,23 @@ set(gcf,'Position',[100 450 700 250]);
 title('pAP: Action potentials'); 
 box on
 hold on; grid on
-plot(ts_T_FE(floor(end*9/10):end).*1.e-3,ts_UH_FE(1,floor(end*9/10):end),'Color',[0.2 0.2 0.7],'LineWidth',2.0)
-plot(ts_T_BE(floor(end*9/10):end).*1.e-3,ts_UH_BE(1,floor(end*9/10):end),'-r','LineWidth',1.0)
+plot(ts_T_FE(end-floor(end/20):end).*1.e-3,ts_UH_FE(1,end-floor(end/20):end),'Color',[0.2 0.2 0.7],'LineWidth',2.0)
+plot(ts_T_BE(end-floor(end/20):end).*1.e-3,ts_UH_BE(1,end-floor(end/20):end),'-r','LineWidth',1.0)
 xlabel('Time (s)','fontsize',10);
 ylabel('u','fontsize',10);
 set(gca,'FontSize',10);
-%%%%%%%%%%%%%%%%%%%%%%%%%% Plot phase portrait
+%%%%%%%%%%%%%%%%%%%%%%%%%% Plot of phase portraits
 subplot(1,2,2)
 title('pAP: Phase portraits'); 
 box on
 hold on
-plot(ts_UH_FE(1,floor(end*3/4):end),ts_UH_FE(2,floor(end*3/4):end),'Color',[0.2 0.2 0.7],'LineWidth',4.0)
-plot(ts_UH_BE(1,floor(end*3/4):end),ts_UH_BE(2,floor(end*3/4):end),'-r','LineWidth',1.0)
+plot(ts_UH_FE(1,floor(end*7/8):end),ts_UH_FE(2,floor(end*7/8):end),'Color',[0.2 0.2 0.7],'LineWidth',4.0)
+plot(ts_UH_BE(1,floor(end*7/8):end),ts_UH_BE(2,floor(end*7/8):end),'-r','LineWidth',1.0)
 str1 = sprintf('BE dt=%0.1e ms ',dt_backward); 
 str2 = sprintf('FE dt=%0.1e ms ',dt_forward); 
 legend(str1,str2,'Location',[0.40,0.016,0.231,0.17],'fontsize',10);
 xlabel('u','fontsize',10);
 ylabel('h','fontsize',10);
 set(gca,'FontSize',10);
-exportgraphics(Fig,'pAP_model_BE_FE.png');
+exportgraphics(Fig,'pAPmodel_BE_FE.png');
 end
