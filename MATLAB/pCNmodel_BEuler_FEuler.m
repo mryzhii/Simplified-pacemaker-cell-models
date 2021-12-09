@@ -151,7 +151,7 @@ fprintf(' Frequency_BE-Frequency_FE = %0.5e  d_Frequency_rel = %0.5e / %0.3f%% \
 fprintf(' sim_time_BE/sim_time_FE = %0.2f \n',sum(sim_time_BE/sim_time_FE)/nruns );
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%% Plot action potentials
+%%%%%%%%%%%%%%%%%%%%%%%%%% Plot of action potentials
 Fig = figure();
 clf
 subplot(1,2,1)
@@ -164,7 +164,7 @@ plot(ts_T_BE(end-floor(end/20):end).*1.e-3,ts_UH_BE(1,end-floor(end/20):end),'-r
 xlabel('Time (s)','fontsize',10);
 ylabel('u','fontsize',10);
 set(gca,'FontSize',10);
-%%%%%%%%%%%%%%%%%%%%%%%%%% Plot phase portrait
+%%%%%%%%%%%%%%%%%%%%%%%%%% Plot of phase portraits
 subplot(1,2,2)
 title('pCN: Phase portraits'); 
 box on
