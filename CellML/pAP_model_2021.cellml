@@ -11,6 +11,8 @@
  Ryzhii M, Ryzhii E. Pacemaking function of two simplified cell models (2021).
  under review
  https://-->
+<!--  Set stim_start to a value less than stim_end to observe 
+  the effect of external current-->
 <model name="oscillating_aliev_panfilov_1996" xmlns="http://www.cellml.org/cellml/1.0#" xmlns:cellml="http://www.cellml.org/cellml/1.0#">
     <units name="millisecond">
         <unit prefix="milli" units="second"/>
@@ -26,6 +28,9 @@
         <variable initial_value="0.01" name="b" units="dimensionless"/>
         <variable initial_value="0.13" name="a" units="dimensionless"/>
         <variable initial_value="0.002" name="eps0" units="dimensionless"/>
+        <variable initial_value="3000" name="Istim_start" units="millisecond"/>
+        <variable initial_value="5000" name="Istim_end" units="millisecond"/>
+        <variable initial_value="0.002" name="Istim_amplitude" units="dimensionless"/>
         <variable name="I" units="dimensionless"/>
         <variable initial_value="8" name="k" units="dimensionless"/>
         <variable initial_value="0.2" name="mu1" units="dimensionless"/>
@@ -36,18 +41,23 @@
                 <ci>I</ci>
                 <piecewise>
                     <piece>
-                        <cn cellml:units="dimensionless">0.0</cn>
+                        <ci>Istim_amplitude</ci>
                         <apply>
                             <and/>
                             <apply>
+                                <lt/>
+                                <ci>Istim_start</ci>
+                                <ci>Istim_end</ci>
+                            </apply>
+                            <apply>
                                 <geq/>
                                 <ci>t</ci>
-                                <cn cellml:units="millisecond">0</cn>
+                                <ci>Istim_start</ci>
                             </apply>
                             <apply>
                                 <leq/>
                                 <ci>t</ci>
-                                <cn cellml:units="millisecond">0.5</cn>
+                                <ci>Istim_end</ci>
                             </apply>
                         </apply>
                     </piece>
@@ -151,5 +161,4 @@
             </apply>
         </math>
     </component>
-
 </model>

@@ -86,7 +86,7 @@
         </math>
     </component>
     <component name="membrane">
-        <variable initial_value="0.01" name="Vm" public_interface="out" units="dimensionless"/>
+        <variable initial_value="0.01" name="u" public_interface="out" units="dimensionless"/>
         <variable name="time" public_interface="in" units="ms"/>
         <variable name="J_in" public_interface="in" units="per_ms"/>
         <variable name="J_out" public_interface="in" units="per_ms"/>
@@ -99,7 +99,7 @@
                     <bvar>
                         <ci>time</ci>
                     </bvar>
-                    <ci>Vm</ci>
+                    <ci>u</ci>
                 </apply>
                 <apply>
                     <plus/>
@@ -114,8 +114,8 @@
         <variable name="J_in" public_interface="out" units="per_ms"/>
         <variable initial_value="0.3" name="tau_in" units="ms"/>
         <variable name="time" private_interface="out" public_interface="in" units="ms"/>
-        <variable initial_value="0.13" name="V_gate" units="dimensionless"/>
-        <variable name="Vm" private_interface="out" public_interface="in" units="dimensionless"/>
+        <variable initial_value="0.13" name="u_gate" units="dimensionless"/>
+        <variable name="u" private_interface="out" public_interface="in" units="dimensionless"/>
         <variable name="h" private_interface="in" units="dimensionless"/>
         <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
@@ -126,16 +126,16 @@
                     <apply>
                         <times/>
                         <ci>h</ci>
-                        <ci>Vm</ci>
+                        <ci>u</ci>
                         <apply>
                             <minus/>
-                            <ci>Vm</ci>
-                            <ci>V_gate</ci>
+                            <ci>u</ci>
+                            <ci>u_gate</ci>
                         </apply>
                         <apply>
                             <minus/>
                             <cn cellml:units="dimensionless">1</cn>
-                            <ci>Vm</ci>
+                            <ci>u</ci>
                         </apply>
                     </apply>
                     <ci>tau_in</ci>
@@ -144,15 +144,15 @@
         </math>
     </component>
     <component name="J_in_h_gate">
-        <variable initial_value="0.5" name="h" public_interface="out" units="dimensionless"/>
+        <variable initial_value="0.9" name="h" public_interface="out" units="dimensionless"/>
         <variable initial_value="120" name="tau_open" units="ms"/>
         <variable initial_value="150" name="tau_close" units="ms"/>
-        <variable initial_value="0.13" name="V_gate" units="dimensionless"/>
-        <variable name="Vm" public_interface="in" units="dimensionless"/>
+        <variable initial_value="0.13" name="u_gate" units="dimensionless"/>
+        <variable name="u" public_interface="in" units="dimensionless"/>
         <variable name="tau" units="ms"/>
         <variable name="h_inf" units="dimensionless"/>
         <variable name="time" public_interface="in" units="ms"/>
-        <variable initial_value="0.001" name="V_s" units="dimensionless"/>
+        <variable initial_value="0.001" name="u_s" units="dimensionless"/>
         <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
                 <eq/>
@@ -194,10 +194,10 @@
                                 <divide/>
                                 <apply>
                                     <minus/>
-                                    <ci>Vm</ci>
-                                    <ci>V_gate</ci>
+                                    <ci>u</ci>
+                                    <ci>u_gate</ci>
                                 </apply>
-                                <ci>V_s</ci>
+                                <ci>u_s</ci>
                             </apply>
                         </apply>
                     </apply>
@@ -227,7 +227,7 @@
     <component name="J_out">
         <variable name="J_out" public_interface="out" units="per_ms"/>
         <variable initial_value="6" name="tau_out" units="ms"/>
-        <variable name="Vm" private_interface="out" public_interface="in" units="dimensionless"/>
+        <variable name="u" private_interface="out" public_interface="in" units="dimensionless"/>
         <variable name="h" private_interface="in" units="dimensionless"/>
         <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
@@ -245,7 +245,7 @@
                                 <ci>h</ci>
                             </apply>
                         </apply>
-                        <ci>Vm</ci>
+                        <ci>u</ci>
                     </apply>
                     <ci>tau_out</ci>
                 </apply>
@@ -276,17 +276,17 @@
     </connection>
     <connection>
         <map_components component_1="membrane" component_2="J_in"/>
-        <map_variables variable_1="Vm" variable_2="Vm"/>
+        <map_variables variable_1="u" variable_2="u"/>
         <map_variables variable_1="J_in" variable_2="J_in"/>
     </connection>
     <connection>
         <map_components component_1="membrane" component_2="J_out"/>
-        <map_variables variable_1="Vm" variable_2="Vm"/>
+        <map_variables variable_1="u" variable_2="u"/>
         <map_variables variable_1="J_out" variable_2="J_out"/>
     </connection>
     <connection>
         <map_components component_1="J_in" component_2="J_in_h_gate"/>
-        <map_variables variable_1="Vm" variable_2="Vm"/>
+        <map_variables variable_1="u" variable_2="u"/>
         <map_variables variable_1="h" variable_2="h"/>
         <map_variables variable_1="time" variable_2="time"/>
     </connection>
@@ -294,5 +294,4 @@
         <map_components component_1="J_in" component_2="J_out"/>
         <map_variables variable_1="h" variable_2="h"/>
     </connection>
-
 </model>

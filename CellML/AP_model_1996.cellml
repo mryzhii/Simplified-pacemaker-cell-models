@@ -25,6 +25,9 @@
         <variable initial_value="0.0775" name="ct" units="dimensionless"/>
         <variable initial_value="0.13" name="a" units="dimensionless"/>
         <variable initial_value="0.002" name="eps0" units="dimensionless"/>
+        <variable initial_value="100" name="IstimStart" units="dimensionless"/>
+        <variable initial_value="110" name="IstimEnd" units="dimensionless"/>
+        <variable initial_value="0.5" name="IstimAmplitude" units="dimensionless"/>
         <variable name="I" units="dimensionless"/>
         <variable initial_value="8.0" name="k" units="dimensionless"/>
         <variable initial_value="0.2" name="mu1" units="dimensionless"/>
@@ -35,18 +38,18 @@
                 <ci>I</ci>
                 <piecewise>
                     <piece>
-                        <cn cellml:units="dimensionless">0.5</cn>
+                        <ci>IstimAmplitude</ci>
                         <apply>
                             <and/>
                             <apply>
                                 <geq/>
                                 <ci>t</ci>
-                                <cn cellml:units="millisecond">100</cn>
+                                <ci>IstimStart</ci>
                             </apply>
                             <apply>
                                 <leq/>
                                 <ci>t</ci>
-                                <cn cellml:units="millisecond">110</cn>
+                                <ci>IstimEnd</ci>
                             </apply>
                         </apply>
                     </piece>
@@ -150,5 +153,4 @@
             </apply>
         </math>
     </component>
-
 </model>
