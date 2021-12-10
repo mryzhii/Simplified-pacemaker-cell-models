@@ -19,7 +19,6 @@ ct   = 1.0/12.9; % Time scaling coefficient
 eps0 = 0.002;
 bAP  = 0.02;
 
-
 dt_backward = 0.0001;   %0.01;  % Time step for backward Euler [ms]
 dt_forward  = 0.01;     % Time step for forward Euler [ms]
 delta  = 0.1;
@@ -30,7 +29,7 @@ nruns = 1; % Set nruns >1 for precise calculation of the simulation time
 sim_time_BE = zeros(nruns,1);
 sim_time_FE = zeros(nruns,1);
 
- spat = 0.0; % -0.002 % Spatial term due to coupling in tissue
+spat = 0.0; % 0.001 % Spatial coupling term (external current)
 
 fprintf('Pacemaking Aliev-Panfilov model: BackwardEuler / ForwardEuler:\n');  
 for run = 1:nruns
@@ -48,8 +47,8 @@ for nt = 1:2
         ts_T_bE  = zeros(1,T/si1);
         ts_UH_bE = zeros(2,T/si1);
       for t = 2 : T 
-        iter   =  0;
-        residual0    =  1.0e6;
+        iter = 0;
+        residual0 = 1.0e6;
         while residual0 > 1.0e-7 && iter <= 20
             dtt = dt_backward*ct;
             tmp  =  (1.0 + dtt*(eps0 + mu1*k*u1*(u1-a-1.0)/(u1+mu2)) );
@@ -136,7 +135,7 @@ end % runs
 if (nloc == 0 || nloc2 == 0)
     fprintf(' - No oscillations -\n'); 
 else
-nn1 = abs( locs2(1)/delta-locs(1)/delta) ;  
+nn1 = floor(abs(locs2(1)/delta-locs(1)/delta)); % Correction shift for BE-FE synchronization
 nend = 3500;
 nbegin = 1;
 
@@ -148,7 +147,6 @@ Udiff_matL_inf_rel = norm(ts_UH_BE(1,nbegin:nend)-ts_UH_FE(1,nbegin+nn1:nend+nn1
 % Comparison
 fprintf(' L_2 relative norm   = %0.8f / %0.4f%% \n',  Udiff_matL_2_rel,   Udiff_matL_2_rel*100);
 fprintf(' L_inf relative norm = %0.8f / %0.4f%% \n',  Udiff_matL_inf_rel, Udiff_matL_inf_rel*100);
-
 fprintf(' Frequency_BE-Frequency_FE = %0.5e  d_Frequency_rel = %0.5e / %0.3f%%\n',...
     Freq_BE-Freq_FE,abs(Freq_BE-Freq_FE)/Freq_BE,abs(Freq_BE-Freq_FE)/Freq_BE*100);
 fprintf(' sim_time_BE/sim_time_FE = %0.2f \n',sum(sim_time_BE/sim_time_FE)/nruns );

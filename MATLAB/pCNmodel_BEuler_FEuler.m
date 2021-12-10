@@ -29,7 +29,7 @@ nruns = 1; % Set nruns >1 for precise calculation of the simulation time
 sim_time_BE = zeros(nruns,1);
 sim_time_FE = zeros(nruns,1);
 
-spat = 0.0; % -0.0002; % Spatial terms due to coupling in tissue
+spat = 0.0; % 0.001; % Spatial coupling term (external current)
 
 fprintf('Pacemaking Corrado-Niederer model: BackwardEuler / ForwardEuler:\n'); 
 for run = 1:nruns
@@ -47,8 +47,8 @@ for nt = 1:2
         ts_T_BE  = zeros(1,T/si1);
         ts_UH_BE = zeros(2,T/si1);
         for t = 2:T 
-          iter   =  0;
-          residual0    =  1.0e6; 
+          iter = 0;
+          residual0 = 1.0e6; 
           while residual0 > 1.0e-7 && iter <= 20
             h_inf = 0.5*(1.0-tanh((u-u_gate)/u_s));
             tau = tau_open*tau_close/(tau_open+h_inf*(tau_close-tau_open));
@@ -96,7 +96,7 @@ for nt = 1:2
        ts_T_FE = zeros(1,T/si2);
        ts_UH_FE = zeros(2,T/si2);
        for t = 1:T 
-          h_inf = 0.5*(1.0-tanh((u-u_gate)/u_s)   );
+          h_inf = 0.5*(1.0-tanh((u-u_gate)/u_s));
           tau = tau_open*tau_close/(tau_open+h_inf*(tau_close-tau_open));
           del_u = h*u*(u + bCN)*(1.0-u)/tau_in - (1.0-h)*u/tau_out + spat; 
           del_h = (h_inf-h)/tau; 
@@ -134,7 +134,7 @@ end % runs
 if (nloc == 0 || nloc2 == 0)
     fprintf(' - No oscillations -\n'); 
 else
-nn1 = abs( locs2(1)/delta-locs(1)/delta);  
+nn1 = floor(abs(locs2(1)/delta-locs(1)/delta)); % Correction shift for BE-FE synchronization
 nend = 3500;
 nbegin = 1;
 % Relative matrix norm^2 
@@ -145,11 +145,9 @@ Udiff_matL_inf_rel = norm(ts_UH_BE(1,nbegin:nend)-ts_UH_FE(1,nbegin+nn1:nend+nn1
 %%% Comparison
 fprintf(' L_2 relative norm   = %0.8f / %0.4f%% \n',  Udiff_matL_2_rel,   Udiff_matL_2_rel*100);
 fprintf(' L_inf relative norm = %0.8f / %0.4f%% \n',  Udiff_matL_inf_rel, Udiff_matL_inf_rel*100);
-
 fprintf(' Frequency_BE-Frequency_FE = %0.5e  d_Frequency_rel = %0.5e / %0.3f%% \n',...
     Freq_BE-Freq_FE,abs(Freq_BE-Freq_FE)/Freq_BE,abs(Freq_BE-Freq_FE)/Freq_BE*100);
 fprintf(' sim_time_BE/sim_time_FE = %0.2f \n',sum(sim_time_BE/sim_time_FE)/nruns );
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% Plot of action potentials
 Fig = figure();
