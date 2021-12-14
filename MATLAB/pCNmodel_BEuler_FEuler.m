@@ -42,14 +42,14 @@ for nt = 1:2
     h1 = 0.5;
     switch nt
     case 1 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Backward Euler
-        tic
-        T = total_time/dt_backward;
-        ts_T_BE  = zeros(1,T/si1);
-        ts_UH_BE = zeros(2,T/si1);
-        for t = 2:T 
-          iter = 0;
-          residual0 = 1.0e6; 
-          while residual0 > 1.0e-7 && iter <= 20
+      tic
+      T = total_time/dt_backward;
+      ts_t_BE  = zeros(1,T/si1);
+      ts_uh_BE = zeros(2,T/si1);
+      for t = 1:T 
+        iter = 0;
+        residual0 = 1.0; 
+        while residual0 > 1.0e-7 && iter <= 20
             h_inf = 0.5*(1.0-tanh((u-u_gate)/u_s));
             tau = tau_open*tau_close/(tau_open+h_inf*(tau_close-tau_open));
             h1 = (h*tau+h_inf*dt_backward)/(tau+dt_backward);
@@ -60,41 +60,41 @@ for nt = 1:2
             iter = iter + 1;
             %residual0 = max(abs(residual), [], 'all'); % In the case of tissue
             residual0 = abs(residual);
-          end % while
-          if iter > 20, fprintf("Warning: iter > 20, Residual = %e\n", residual0); end
-          u = u1;
-          h = h1;     
+        end % while
+        if iter > 20, fprintf("Warning: iter > 20, Residual = %e\n", residual0); end
+        u = u1;
+        h = h1;     
 %  Downsample to create output matrix         
-          if rem(t,si1) == 0
-            j = floor(t/si1);
-            ts_UH_BE(1,j) = u;
-            ts_UH_BE(2,j) = h;
-            ts_T_BE(1,j) = t*dt_backward;
-          end
-       end % t
-       sim_time_BE(run) = toc;
-       [peaks,locs,widths,proms] = findpeaks(ts_UH_BE(1,1:end),ts_T_BE(1:end),...
-           'MinPeakHeight',0.1,'MinPeakDistance',0.10);
-       Period_BE = 1.e-3*mean(diff(locs));   % In [s]
-       if isnan(Period_BE) 
-          nloc = 0;
-          Freq_BE = NaN;
-          Ampl_BE = 0;
-          Maxp_BE = 0;  
-       else
-          nloc = length(locs);
-          Freq_BE = 1.0/Period_BE;
-          Ampl_BE = max(proms(floor(end/2):end));
-          Maxp_BE = max(peaks(floor(end/2):end));
-       end
+        if rem(t,si1) == 0
+          j = floor(t/si1);
+          ts_uh_BE(1,j) = u;
+          ts_uh_BE(2,j) = h;
+          ts_t_BE(1,j) = t*dt_backward;
+        end
+      end % t
+      sim_time_BE(run) = toc;
+      [peaks,locs,widths,proms] = findpeaks(ts_uh_BE(1,1:end),ts_t_BE(1:end),...
+      'MinPeakHeight',0.1,'MinPeakDistance',0.10);
+      Period_BE = 1.e-3*mean(diff(locs));   % In [s]
+      if isnan(Period_BE) 
+        nloc = 0;
+        Freq_BE = NaN;
+        Ampl_BE = 0;
+        Maxp_BE = 0;  
+      else
+        nloc = length(locs);
+        Freq_BE = 1.0/Period_BE;
+        Ampl_BE = max(proms(floor(end/2):end));
+        Maxp_BE = max(peaks(floor(end/2):end));
+      end
        fprintf('BE: dt_backward = %0.5f  Period_BE = %0.4f  Freq_BE = %0.4f  Ampl_BE = %0.4f\n',...
            dt_backward,Period_BE,Freq_BE,Ampl_BE);
 
     case 2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Forward Euler
        tic
        T = total_time/dt_forward;
-       ts_T_FE = zeros(1,T/si2);
-       ts_UH_FE = zeros(2,T/si2);
+       ts_t_FE = zeros(1,T/si2);
+       ts_uh_FE = zeros(2,T/si2);
        for t = 1:T 
           h_inf = 0.5*(1.0-tanh((u-u_gate)/u_s));
           tau = tau_open*tau_close/(tau_open+h_inf*(tau_close-tau_open));
@@ -105,13 +105,13 @@ for nt = 1:2
 %  Downsample to create output matrix          
           if rem(t,si2) == 0
             j = floor(t/si2);
-            ts_UH_FE(1,j) = u;
-            ts_UH_FE(2,j) = h;
-            ts_T_FE(1,j) = t*dt_forward;
+            ts_uh_FE(1,j) = u;
+            ts_uh_FE(2,j) = h;
+            ts_t_FE(1,j) = t*dt_forward;
           end %
        end % t
        sim_time_FE(run) = toc;
-       [peaks2,locs2,widths2,proms2] = findpeaks(ts_UH_FE(1,1:end),ts_T_FE(1:end),...
+       [peaks2,locs2,widths2,proms2] = findpeaks(ts_uh_FE(1,1:end),ts_t_FE(1:end),...
         'MinPeakHeight',0.1,'MinPeakDistance',0.10);
        Period_FE = 1.e-3*mean(diff(locs2));   % In [s]
        if isnan(Period_FE) 
@@ -133,46 +133,47 @@ end % runs
 if (nloc == 0 || nloc2 == 0)
     fprintf(' - No oscillations -\n'); 
 else
-nn1 = floor(abs(locs2(1)/delta-locs(1)/delta)); % Correction shift for BE-FE synchronization
-nend = 3500;
-nbegin = 1;
+  nn1 = floor(abs(locs2(1)/delta-locs(1)/delta)); % Correction shift for BE-FE synchronization
+  nend = 3500;
+  nbegin = 1;
 % Relative matrix norm^2 
-Udiff_matL_2_rel   = norm(ts_UH_BE(1,nbegin:nend)-ts_UH_FE(1,nbegin+nn1:nend+nn1),2)/norm(ts_UH_BE(1,nbegin:nend),2);
+  udiff_matL_2_rel   = norm(ts_uh_BE(1,nbegin:nend)-ts_uh_FE(1,nbegin+nn1:nend+nn1),2)/norm(ts_uh_BE(1,nbegin:nend),2);
 % Relative matrix norm^Inf 
-Udiff_matL_inf_rel = norm(ts_UH_BE(1,nbegin:nend)-ts_UH_FE(1,nbegin+nn1:nend+nn1),Inf)/norm(ts_UH_BE(1,nbegin:nend),Inf);
+  udiff_matL_inf_rel = norm(ts_uh_BE(1,nbegin:nend)-ts_uh_FE(1,nbegin+nn1:nend+nn1),Inf)/norm(ts_uh_BE(1,nbegin:nend),Inf);
 
 %%% Comparison
-fprintf(' L_2 relative norm   = %0.8f / %0.4f%% \n',  Udiff_matL_2_rel,   Udiff_matL_2_rel*100);
-fprintf(' L_inf relative norm = %0.8f / %0.4f%% \n',  Udiff_matL_inf_rel, Udiff_matL_inf_rel*100);
-fprintf(' Frequency_BE-Frequency_FE = %0.5e  d_Frequency_rel = %0.5e / %0.3f%% \n',...
+  fprintf(' L_2 relative norm   = %0.8f / %0.4f%% \n',  udiff_matL_2_rel,   udiff_matL_2_rel*100);
+  fprintf(' L_inf relative norm = %0.8f / %0.4f%% \n',  udiff_matL_inf_rel, udiff_matL_inf_rel*100);
+  fprintf(' Frequency_BE-Frequency_FE = %0.5e  d_Frequency_rel = %0.5e / %0.3f%% \n',...
     Freq_BE-Freq_FE,abs(Freq_BE-Freq_FE)/Freq_BE,abs(Freq_BE-Freq_FE)/Freq_BE*100);
-fprintf(' sim_time_BE/sim_time_FE = %0.2f \n',sum(sim_time_BE/sim_time_FE)/nruns );
+  fprintf(' sim_time_BE/sim_time_FE = %0.2f \n',sum(sim_time_BE/sim_time_FE)/nruns );
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% Plot of action potentials
-Fig = figure();
-clf
-subplot(1,2,1)
-set(gcf,'Position',[100 450 700 250]);
-title('pCN: Action potentials'); 
-box on
-hold on; grid on
-plot(ts_T_FE(end-floor(end/20):end).*1.e-3,ts_UH_FE(1,end-floor(end/20):end),'Color',[0.2 0.2 0.7],'LineWidth',2.0)
-plot(ts_T_BE(end-floor(end/20):end).*1.e-3,ts_UH_BE(1,end-floor(end/20):end),'-r','LineWidth',1.0)
-xlabel('Time (s)','FontSize',10);
-ylabel('u','FontSize',10);
-set(gca,'FontSize',10);
+  Fig = figure();
+  clf
+  set(gcf,'Position',[100 450 700 250]);
+  subplot(1,2,1)
+  title('pCN: Action potentials'); 
+  box on
+  hold on; grid on
+  plot(ts_t_FE(end-floor(end/20):end).*1.e-3,ts_uh_FE(1,end-floor(end/20):end),'Color',[0.2 0.2 0.7],'LineWidth',2.0)
+  plot(ts_t_BE(end-floor(end/20):end).*1.e-3,ts_uh_BE(1,end-floor(end/20):end),'-r','LineWidth',1.0)
+  xlabel('Time (s)','FontSize',10);
+  ylabel('u','FontSize',10);
+  set(gca,'FontSize',10);
 %%%%%%%%%%%%%%%%%%%%%%%%%% Plot of phase portraits
-subplot(1,2,2)
-title('pCN: Phase portraits'); 
-box on
-hold on
-plot(ts_UH_FE(1,floor(end*7/8):end),ts_UH_FE(2,floor(end*7/8):end),'Color',[0.2 0.2 0.7],'LineWidth',4.0)
-plot(ts_UH_BE(1,floor(end*7/8):end),ts_UH_BE(2,floor(end*7/8):end),'-r','LineWidth',1.0)
-str1 = sprintf('BE dt=%0.1e ms ',dt_backward); 
-str2 = sprintf('FE dt=%0.1e ms ',dt_forward); 
-legend(str1,str2,'Location',[0.40,0.016,0.231,0.17],'FontSize',10);
-xlabel('u','Fontsize',10);
-ylabel('h','Fontsize',10);
-set(gca,'FontSize',10);
-exportgraphics(Fig,'pCNmodel_BE_FE.png');
+  subplot(1,2,2)
+  title('pCN: Phase portraits'); 
+  box on
+  hold on
+  plot(ts_uh_FE(1,floor(end*7/8):end),ts_uh_FE(2,floor(end*7/8):end),'Color',[0.2 0.2 0.7],'LineWidth',4.0)
+  plot(ts_uh_BE(1,floor(end*7/8):end),ts_uh_BE(2,floor(end*7/8):end),'-r','LineWidth',1.0)
+  str1 = sprintf('BE dt=%0.1e ms ',dt_backward); 
+  str2 = sprintf('FE dt=%0.1e ms ',dt_forward); 
+  legend(str1,str2,'Location',[0.40,0.016,0.231,0.17],'FontSize',10);
+  xlabel('u','Fontsize',10);
+  ylabel('h','Fontsize',10);
+  set(gca,'FontSize',10);
+  
+  exportgraphics(Fig,'pCNmodel_BE_FE.png');
 end
