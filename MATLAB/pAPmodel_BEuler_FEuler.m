@@ -64,13 +64,13 @@ for nt = 1:2
         if iter > 20, fprintf("Warning: iter > 20, Residual = %e\n", residual0); end
         u = u1;
         v = v1;
-%  Downsample to create output matrix         
+%  Downsample to create output matrix
         if rem(t,si1) == 0
               j = floor(t/si1);
               ts_uvt_BE(1,j) = u;
               ts_uvt_BE(2,j) = v;
               ts_uvt_BE(3,j) = t*dt_backward;
-         end
+        end
       end  % t
       sim_time_BE(run) = toc;
       [peaks,locs,widths,proms] = findpeaks(ts_uvt_BE(1,:),ts_uvt_BE(3,:),...
