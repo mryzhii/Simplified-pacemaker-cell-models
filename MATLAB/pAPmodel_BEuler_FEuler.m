@@ -33,7 +33,7 @@ spat = 0.0; % 0.001 % Spatial coupling term (external current)
 
 fprintf('Pacemaking Aliev-Panfilov model: BackwardEuler / ForwardEuler:\n');  
 for run = 1:nruns
-    if nruns>1 fprintf("Run %d\n",run); end
+    if nruns>1, fprintf("Run %d\n",run); end
     
 for nt = 1:2
     u  =  0.01;
@@ -44,8 +44,7 @@ for nt = 1:2
     case 1 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Backward Euler  
       tic
       T = total_time/dt_backward;
-      ts_t_BE  = zeros(1,T/si1);
-      ts_uv_BE = zeros(2,T/si1);
+      ts_uvt_BE = zeros(3,T/si1); % Matrix with u, v, and t
       for t = 1:T 
         iter = 0;
         residual0 = 1.0;
@@ -68,13 +67,13 @@ for nt = 1:2
 %  Downsample to create output matrix         
         if rem(t,si1) == 0
               j = floor(t/si1);
-              ts_uv_BE(1,j) = u;
-              ts_uv_BE(2,j) = v;
-              ts_t_BE(j) = t*dt_backward;
+              ts_uvt_BE(1,j) = u;
+              ts_uvt_BE(2,j) = v;
+              ts_uvt_BE(3,j) = t*dt_backward;
          end
       end  % t
       sim_time_BE(run) = toc;
-      [peaks,locs,widths,proms] = findpeaks(ts_uv_BE(1,1:end),ts_t_BE(1:end),...
+      [peaks,locs,widths,proms] = findpeaks(ts_uvt_BE(1,:),ts_uvt_BE(3,:),...
         'MinPeakHeight',0.1,'MinPeakDistance',0.10);
         Period_BE = 1.e-3*mean(diff(locs));   % In [s]
       if isnan(Period_BE) 
@@ -94,8 +93,7 @@ for nt = 1:2
     case 2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Forward Euler
       tic  
       T = total_time/dt_forward;
-      ts_T_FE =  zeros(1,T/si2);
-      ts_UV_FE = zeros(2,T/si2);
+      ts_uvt_FE = zeros(3,T/si2); % Matrix with u, v, and t
       for t = 1:T
          dudt = ct*(k*u*(u + bAP)*(1.0-u) - u*v) + spat;
          dvdt = ct*(eps0 + mu1*v/(u+mu2))*(-v-k*u*(u-a-1.0));
@@ -104,13 +102,13 @@ for nt = 1:2
  %  Downsample to create output matrix         
          if rem(t,si2) == 0
             j = floor(t/si2);
-            ts_uv_FE(1,j) = u;
-            ts_uv_FE(2,j) = v;
-            ts_t_FE(j) = t*dt_forward;
+            ts_uvt_FE(1,j) = u;
+            ts_uvt_FE(2,j) = v;
+            ts_uvt_FE(3,j) = t*dt_forward;
          end      
       end % t
       sim_time_FE(run) = toc;  
-      [peaks2,locs2,widths2,proms2] = findpeaks(ts_uv_FE(1,1:end),ts_t_FE(1:end),...
+      [peaks2,locs2,widths2,proms2] = findpeaks(ts_uvt_FE(1,:),ts_uvt_FE(3,:),...
       'MinPeakHeight',0.1,'MinPeakDistance',0.10);
       Period_FE = 1.e-3*mean(diff(locs2));   % In [s]
       if isnan(Period_FE) 
@@ -122,7 +120,7 @@ for nt = 1:2
          nloc2 = length(locs2);
          Freq_FE = 1.0/Period_FE;
          Ampl_FE = max(proms2(floor(end/2):end));
-          Maxp_FE = max(peaks2(floor(end/2):end));
+         Maxp_FE = max(peaks2(floor(end/2):end));
       end
  
       fprintf('FE: dt_forward  = %0.5f  Period_FE = %0.5f  Freq_FE = %0.4f  Ampl_FE = %0.4f\n',...
@@ -139,9 +137,9 @@ else
   nbegin = 1;
 
 % Relative matrix norm^2 
-  udiff_matL_2_rel   = norm(ts_uv_BE(1,nbegin:nend)-ts_uv_FE(1,nbegin+nn1:nend+nn1),2)/norm(ts_uv_BE(1,nbegin:nend),2);
+  udiff_matL_2_rel   = norm(ts_uvt_BE(1,nbegin:nend)-ts_uvt_FE(1,nbegin+nn1:nend+nn1),2)/norm(ts_uvt_BE(1,nbegin:nend),2);
 % Relative matrix norm^Inf 
-  udiff_matL_inf_rel = norm(ts_uv_BE(1,nbegin:nend)-ts_uv_FE(1,nbegin+nn1:nend+nn1),Inf)/norm(ts_uv_BE(1,nbegin:nend),Inf);
+  udiff_matL_inf_rel = norm(ts_uvt_BE(1,nbegin:nend)-ts_uvt_FE(1,nbegin+nn1:nend+nn1),Inf)/norm(ts_uvt_BE(1,nbegin:nend),Inf);
 
 % Comparison
   fprintf(' L_2 relative norm   = %0.8f / %0.4f%% \n',  udiff_matL_2_rel,   udiff_matL_2_rel*100);
@@ -158,8 +156,8 @@ else
   title('pAP: Action potentials'); 
   box on
   hold on; grid on
-  plot(ts_t_FE(end-floor(end/20):end).*1.e-3,ts_uv_FE(1,end-floor(end/20):end),'Color',[0.2 0.2 0.7],'LineWidth',2.0)
-  plot(ts_t_BE(end-floor(end/20):end).*1.e-3,ts_uv_BE(1,end-floor(end/20):end),'-r','LineWidth',1.0)
+  plot(ts_uvt_FE(3,end-floor(end/20):end).*1.e-3,ts_uvt_FE(1,end-floor(end/20):end),'Color',[0.2 0.2 0.7],'LineWidth',2.0)
+  plot(ts_uvt_BE(3,end-floor(end/20):end).*1.e-3,ts_uvt_BE(1,end-floor(end/20):end),'-r','LineWidth',1.0)
   xlabel('Time (s)','FontSize',10);
   ylabel('u','FontSize',10);
   set(gca,'FontSize',10);
@@ -168,8 +166,8 @@ else
   title('pAP: Phase portraits'); 
   box on
   hold on
-  plot(ts_uv_FE(1,floor(end*7/8):end),ts_uv_FE(2,floor(end*7/8):end),'Color',[0.2 0.2 0.7],'LineWidth',4.0)
-  plot(ts_uv_BE(1,floor(end*7/8):end),ts_uv_BE(2,floor(end*7/8):end),'-r','LineWidth',1.0)
+  plot(ts_uvt_FE(1,floor(end*7/8):end),ts_uvt_FE(2,floor(end*7/8):end),'Color',[0.2 0.2 0.7],'LineWidth',4.0)
+  plot(ts_uvt_BE(1,floor(end*7/8):end),ts_uvt_BE(2,floor(end*7/8):end),'-r','LineWidth',1.0)
   str1 = sprintf('BE dt=%0.1e ms ',dt_backward); 
   str2 = sprintf('FE dt=%0.1e ms ',dt_forward); 
   legend(str1,str2,'Location',[0.40,0.016,0.231,0.17],'FontSize',10);

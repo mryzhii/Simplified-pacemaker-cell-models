@@ -33,7 +33,7 @@ spat = 0.0; % 0.001; % Spatial coupling term (external current)
 
 fprintf('Pacemaking Corrado-Niederer model: BackwardEuler / ForwardEuler:\n'); 
 for run = 1:nruns
- if nruns>1 fprintf("Run %d\n",run); end
+ if nruns>1, fprintf("Run %d\n",run); end
 
 for nt = 1:2
     u  = 0.01;
@@ -44,8 +44,7 @@ for nt = 1:2
     case 1 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Backward Euler
       tic
       T = total_time/dt_backward;
-      ts_t_BE  = zeros(1,T/si1);
-      ts_uh_BE = zeros(2,T/si1);
+      ts_uht_BE = zeros(3,T/si1); % Matrix with u, h, and t
       for t = 1:T 
         iter = 0;
         residual0 = 1.0; 
@@ -67,13 +66,13 @@ for nt = 1:2
 %  Downsample to create output matrix         
         if rem(t,si1) == 0
           j = floor(t/si1);
-          ts_uh_BE(1,j) = u;
-          ts_uh_BE(2,j) = h;
-          ts_t_BE(1,j) = t*dt_backward;
+          ts_uht_BE(1,j) = u;
+          ts_uht_BE(2,j) = h;
+          ts_uht_BE(3,j) = t*dt_backward;
         end
       end % t
       sim_time_BE(run) = toc;
-      [peaks,locs,widths,proms] = findpeaks(ts_uh_BE(1,1:end),ts_t_BE(1:end),...
+      [peaks,locs,widths,proms] = findpeaks(ts_uht_BE(1,:),ts_uht_BE(3,:),...
       'MinPeakHeight',0.1,'MinPeakDistance',0.10);
       Period_BE = 1.e-3*mean(diff(locs));   % In [s]
       if isnan(Period_BE) 
@@ -93,8 +92,7 @@ for nt = 1:2
     case 2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Forward Euler
        tic
        T = total_time/dt_forward;
-       ts_t_FE = zeros(1,T/si2);
-       ts_uh_FE = zeros(2,T/si2);
+       ts_uht_FE = zeros(3,T/si2); % Matrix with u, h, and t
        for t = 1:T 
           h_inf = 0.5*(1.0-tanh((u-u_gate)/u_s));
           tau = tau_open*tau_close/(tau_open+h_inf*(tau_close-tau_open));
@@ -105,13 +103,13 @@ for nt = 1:2
 %  Downsample to create output matrix          
           if rem(t,si2) == 0
             j = floor(t/si2);
-            ts_uh_FE(1,j) = u;
-            ts_uh_FE(2,j) = h;
-            ts_t_FE(1,j) = t*dt_forward;
+            ts_uht_FE(1,j) = u;
+            ts_uht_FE(2,j) = h;
+            ts_uht_FE(3,j) = t*dt_forward;
           end %
        end % t
        sim_time_FE(run) = toc;
-       [peaks2,locs2,widths2,proms2] = findpeaks(ts_uh_FE(1,1:end),ts_t_FE(1:end),...
+       [peaks2,locs2,widths2,proms2] = findpeaks(ts_uht_FE(1,:),ts_uht_FE(3,:),...
         'MinPeakHeight',0.1,'MinPeakDistance',0.10);
        Period_FE = 1.e-3*mean(diff(locs2));   % In [s]
        if isnan(Period_FE) 
@@ -137,9 +135,9 @@ else
   nend = 3500;
   nbegin = 1;
 % Relative matrix norm^2 
-  udiff_matL_2_rel   = norm(ts_uh_BE(1,nbegin:nend)-ts_uh_FE(1,nbegin+nn1:nend+nn1),2)/norm(ts_uh_BE(1,nbegin:nend),2);
+  udiff_matL_2_rel   = norm(ts_uht_BE(1,nbegin:nend)-ts_uht_FE(1,nbegin+nn1:nend+nn1),2)/norm(ts_uht_BE(1,nbegin:nend),2);
 % Relative matrix norm^Inf 
-  udiff_matL_inf_rel = norm(ts_uh_BE(1,nbegin:nend)-ts_uh_FE(1,nbegin+nn1:nend+nn1),Inf)/norm(ts_uh_BE(1,nbegin:nend),Inf);
+  udiff_matL_inf_rel = norm(ts_uht_BE(1,nbegin:nend)-ts_uht_FE(1,nbegin+nn1:nend+nn1),Inf)/norm(ts_uht_BE(1,nbegin:nend),Inf);
 
 %%% Comparison
   fprintf(' L_2 relative norm   = %0.8f / %0.4f%% \n',  udiff_matL_2_rel,   udiff_matL_2_rel*100);
@@ -156,8 +154,8 @@ else
   title('pCN: Action potentials'); 
   box on
   hold on; grid on
-  plot(ts_t_FE(end-floor(end/20):end).*1.e-3,ts_uh_FE(1,end-floor(end/20):end),'Color',[0.2 0.2 0.7],'LineWidth',2.0)
-  plot(ts_t_BE(end-floor(end/20):end).*1.e-3,ts_uh_BE(1,end-floor(end/20):end),'-r','LineWidth',1.0)
+  plot(ts_uht_FE(3,end-floor(end/20):end).*1.e-3,ts_uht_FE(1,end-floor(end/20):end),'Color',[0.2 0.2 0.7],'LineWidth',2.0)
+  plot(ts_uht_BE(3,end-floor(end/20):end).*1.e-3,ts_uht_BE(1,end-floor(end/20):end),'-r','LineWidth',1.0)
   xlabel('Time (s)','FontSize',10);
   ylabel('u','FontSize',10);
   set(gca,'FontSize',10);
@@ -166,8 +164,8 @@ else
   title('pCN: Phase portraits'); 
   box on
   hold on
-  plot(ts_uh_FE(1,floor(end*7/8):end),ts_uh_FE(2,floor(end*7/8):end),'Color',[0.2 0.2 0.7],'LineWidth',4.0)
-  plot(ts_uh_BE(1,floor(end*7/8):end),ts_uh_BE(2,floor(end*7/8):end),'-r','LineWidth',1.0)
+  plot(ts_uht_FE(1,floor(end*7/8):end),ts_uht_FE(2,floor(end*7/8):end),'Color',[0.2 0.2 0.7],'LineWidth',4.0)
+  plot(ts_uht_BE(1,floor(end*7/8):end),ts_uht_BE(2,floor(end*7/8):end),'-r','LineWidth',1.0)
   str1 = sprintf('BE dt=%0.1e ms ',dt_backward); 
   str2 = sprintf('FE dt=%0.1e ms ',dt_forward); 
   legend(str1,str2,'Location',[0.40,0.016,0.231,0.17],'FontSize',10);
