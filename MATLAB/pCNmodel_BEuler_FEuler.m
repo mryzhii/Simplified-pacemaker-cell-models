@@ -166,8 +166,8 @@ else
   hold on
   plot(ts_uht_FE(1,floor(end*7/8):end),ts_uht_FE(2,floor(end*7/8):end),'Color',[0.2 0.2 0.7],'LineWidth',4.0)
   plot(ts_uht_BE(1,floor(end*7/8):end),ts_uht_BE(2,floor(end*7/8):end),'-r','LineWidth',1.0)
-  str1 = sprintf('BE dt=%0.1e ms ',dt_backward); 
-  str2 = sprintf('FE dt=%0.1e ms ',dt_forward); 
+  str1 = sprintf('FE dt=%0.1e ms ',dt_forward); 
+  str2 = sprintf('BE dt=%0.1e ms ',dt_backward); 
   legend(str1,str2,'Location',[0.40,0.016,0.231,0.17],'FontSize',10);
   xlabel('u','Fontsize',10);
   ylabel('h','Fontsize',10);
