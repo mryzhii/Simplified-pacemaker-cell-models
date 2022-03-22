@@ -172,7 +172,7 @@ else
   str1 = sprintf('FE dt=%0.1e ms ',dt_forward); 
   legend(str1,str2,'Location',[0.40,0.016,0.231,0.17],'FontSize',10);
   xlabel('u','FontSize',10);
-  ylabel('h','FontSize',10);
+  ylabel('v','FontSize',10);
   set(gca,'FontSize',10);
   
   exportgraphics(Fig,'pAPmodel_BE_FE.png');
