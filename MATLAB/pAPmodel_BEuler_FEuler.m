@@ -1,8 +1,8 @@
 %   **********************************************************************
 %   * Copyright(c) 2021 M. Ryzhii, University of Aizu, Japan             *
 %   *                   E. Ryzhii, Fukushima Medical University, Japan   *
-%   * "Pacemaking function of two simplified cell models",               *  
-%   *  under review                                                      *
+%   * (2022) "Pacemaking function of two simplified cell models",        *
+%   *  PLoS ONE 17(4): e0257935. doi.org/10.1371/journal.pone.0257935    *
 %   *  05/12/2021                                                        *
 %   **********************************************************************
 % Pacemaker (oscillator) variant of the Aliev & Panfilov model (1996)
