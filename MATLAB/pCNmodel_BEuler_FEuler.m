@@ -1,10 +1,10 @@
-%   **********************************************************************
-%   * Copyright(c) 2021 M. Ryzhii, University of Aizu, Japan             *
-%   *                   E. Ryzhii, Fukushima Medical University, Japan   *
-%   * (2022) "Pacemaking function of two simplified cell models",        *
-%   *  PLoS ONE 17(4): e0257935. doi.org/10.1371/journal.pone.0257935    *
-%   *  05/12/2021                                                        *
-%   **********************************************************************
+%   ********************************************************************
+%   * Copyright(c) M. Ryzhii, University of Aizu, Japan                *
+%   *              E. Ryzhii, Fukushima Medical University, Japan      *
+%   *              05/12/2021                                          *
+%   * (2022) "Pacemaking function of two simplified cell models",      *
+%   *  PLoS ONE 17(4): e0257935. doi.org/10.1371/journal.pone.0257935  *
+%   ********************************************************************
 % Pacemaker (oscillator) variant of the Corrado & Niederer model (2016)
 % Comparison of Backward Euler and Forward Euler methods with different time step dt
 %
