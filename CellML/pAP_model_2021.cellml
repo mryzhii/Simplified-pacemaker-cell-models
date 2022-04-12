@@ -7,10 +7,12 @@
  CellML 1.0 was used to generate this cellular model
  http://www.CellML.org/
 
- Pacemaking variant of the Aliev & Panfilov two-variable cell model. 
- Ryzhii M, Ryzhii E. Pacemaking function of two simplified cell models (2021).
- under review
- https://-->
+Pacemaking variant of the Corrado & Niederer two-variable cell model. 
+M. Ryzhii, University of Aizu, Japan
+E. Ryzhii, Fukushima Medical University, Japan
+(2022) "Pacemaking function of two simplified cell models"
+PLoS ONE 17(4): e0257935. doi.org/10.1371/journal.pone.0257935 
+-->
 <!--  Set stim_start to a value less than stim_end to observe 
   the effect of external current-->
 <model name="oscillating_aliev_panfilov_1996" xmlns="http://www.cellml.org/cellml/1.0#" xmlns:cellml="http://www.cellml.org/cellml/1.0#">
